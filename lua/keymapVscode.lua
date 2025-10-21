@@ -1,4 +1,4 @@
--- ================== 功能 对应的 Vscode 的 API =================
+-- * ================== 对应的 Vscode 的 API =================
 local search = {
     reference = function()
         vim.fn.VSCodeNotify("editor.action.referenceSearch.trigger")
@@ -83,39 +83,36 @@ local workbench = {
 }
 
 local vscode = {
-    focusEditor = function()
-        vim.fn.VSCodeNotify("workbench.action.focusActiveEditorGroup")
-    end,
     moveSideBarRight = function()
         vim.fn.VSCodeNotify("workbench.action.moveSideBarRight")
     end,
     moveSideBarLeft = function()
         vim.fn.VSCodeNotify("workbench.action.moveSideBarLeft")
-    end,
-    closeEditor = function()
-        vim.fn.VSCodeNotify("workbench.action.closeActiveEditor")
     end
 }
 
--- ================== 让按键绑定功能 =================
+local editor = {
+    closeCurrentEditor = function()
+        vim.fn.VSCodeNotify('workbench.action.closeActiveEditor')
+    end,
+    closeAllEditors = function()
+        vim.fn.VSCodeNotify('workbench.action.closeAllEditors')
+    end
+}
+
+-- * ====================== 让按键绑定功能 ======================
+
 vim.g.mapleader = " "
 
 -- no highlight
 vim.keymap.set({'n'}, "<Esc>", "<cmd>noh<CR>")
 
--- file
+-- format
 vim.keymap.set({'n'}, "<leader>ff", file.format)
-vim.keymap.set({'n'}, "<leader>fn", file.new)
-vim.keymap.set({'n'}, "<leader>fr", file.rename)
-
--- 就是我平时的 Ctrl-Shift-P
-vim.keymap.set({'n', 'v'}, "<leader> ", workbench.showCommands)
 
 -- Editor Navigation
 vim.keymap.set({'n', 'v'}, "J", workbench.previousEditor)
 vim.keymap.set({'n', 'v'}, "K", workbench.nextEditor)
-
-vim.keymap.set({'n'}, "<leader>ve", vscode.focusEditor)
 
 -- search
 vim.keymap.set({'n'}, "<leader>sr", search.reference)
@@ -123,27 +120,15 @@ vim.keymap.set({'n'}, "<leader>sR", search.referenceInSideBar)
 vim.keymap.set({'n'}, "<leader>sp", search.project)
 vim.keymap.set({'n'}, "<leader>st", search.text)
 
--- 关闭当前编辑器
-
 -- 在 Editor Group 之间按 <C-hjkl> 跳转
 vim.keymap.set('n', '<C-h>', workbench.focusLeftGroup)
 vim.keymap.set('n', '<C-l>', workbench.focusRightGroup)
 vim.keymap.set('n', '<C-j>', workbench.focusBelowGroup)
 vim.keymap.set('n', '<C-k>', workbench.focusAboveGroup)
 
--- close current window
-vim.keymap.set('n', 'wc', function()
-    vim.fn.VSCodeNotify('workbench.action.closeActiveEditor')
-end, {
-    desc = 'Close current editor'
-})
-
--- close all window
-vim.keymap.set('n', 'ca', function()
-    vim.fn.VSCodeNotify('workbench.action.closeAllEditors')
-end, {
-    desc = 'Close current editor'
-})
+-- 编辑器的关闭设置
+vim.keymap.set('n', '<leader>wc', editor.closeCurrentEditor)
+vim.keymap.set('n', '<leader>ca', editor.closeAllEditors)
 
 -- 代码折叠
 local function map_fold(key, vscode_cmd)
@@ -160,3 +145,18 @@ map_fold('zC', 'editor.foldRecursively')
 map_fold('zo', 'editor.unfold')
 map_fold('zO', 'editor.unfoldRecursively')
 map_fold('za', 'editor.toggleFold')
+
+-- 多光标操作
+vim.keymap.set('n', '<leader>p', 'mciw#<Cmd>nohl<CR>', {
+    remap = true,
+    desc = "多光标选择当前单词, 并跳转到上一个"
+})
+vim.keymap.set('n', '<leader>n', 'mciw*<Cmd>nohl<CR>', {
+    remap = true,
+    desc = "多光标选择当前单词, 并跳转到下一个"
+})
+vim.keymap.set('n', '<leader>x', 'mclw', {
+    remap = true,
+    desc = "取消当前光标所在单词的多光标选择"
+})
+

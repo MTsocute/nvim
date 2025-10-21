@@ -1,10 +1,10 @@
--- * ============================================== PUBLIC CONFIG ==============================================
+-- * ====================== PUBLIC CONFIG ======================
 vim.g.mapleader = " "
 
 -- no highlight
 vim.keymap.set({'n'}, "<Esc>", "<cmd>noh<CR>")
 
--- hop jump
+-- 快速跳转
 vim.keymap.set('', '<leader><leader>w', require'hop'.hint_words, {})
 vim.keymap.set('', '<leader><leader>l', require'hop'.hint_lines, {})
 vim.keymap.set('', '<leader><leader>c', require'hop'.hint_char1, {})
@@ -25,4 +25,3 @@ if not vim.g.vscode then
     vim.keymap.set('n', '<C-k>', '<C-w>k', { desc = 'Go to above window' })
     vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = 'Go to right window' })
 end
-
