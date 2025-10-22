@@ -244,5 +244,19 @@
         "key": "ctrl+right",
         "command": "-quickInput.acceptInBackground",
         "when": "cursorAtEndOfQuickInputBox && inQuickInput && quickInputType == 'quickPick' || inQuickInput && !inputFocus && quickInputType == 'quickPick'"
+    },
+    {
+        "key": "ctrl+shift+a",
+        "command": "-workbench.action.showCommands"
+    },
+    {
+        "key": "ctrl+shift+a",
+        "command": "workbench.view.debug",
+        "when": "viewContainer.workbench.view.debug.enabled"
+    },
+    {
+        "key": "ctrl+shift+f8",
+        "command": "-workbench.view.debug",
+        "when": "viewContainer.workbench.view.debug.enabled"
     }
 ]
