@@ -1,4 +1,3 @@
-
 -- * ================== 对应的 Vscode 的 API =================
 local telescope = {
     -- 相当于 Telescope find_files (找文件)
@@ -147,7 +146,7 @@ vim.g.mapleader = " "
 vim.keymap.set({ 'n' }, "<Esc>", "<cmd>noh<CR>")
 
 -- format
-vim.keymap.set({ 'n' }, "<leader>fm", file.format)
+vim.keymap.set({ 'n' }, "<leader>ff", file.format)
 
 -- Editor Navigation
 vim.keymap.set({ 'n', 'v' }, "J", workbench.previousEditor)
@@ -180,6 +179,10 @@ map_fold('zo', 'editor.unfold')
 map_fold('zO', 'editor.unfoldRecursively')
 map_fold('za', 'editor.toggleFold')
 
+
+
+
+
 -- 多光标操作
 vim.keymap.set('n', '<leader>p', 'mciw#<Cmd>nohl<CR>', {
     remap = true,
@@ -203,12 +206,6 @@ vim.keymap.set({ 'n' }, "<Esc>", function()
 end)
 
 -- 绑定快捷键 (模仿 Telescope 默认键位)
-vim.keymap.set('n', '<leader>ff', telescope.find_files, { desc = "Find Files (Quick Open)" })
+vim.keymap.set('n', '<leader>fa', telescope.find_files, { desc = "Find Files (Quick Open)" })
 vim.keymap.set('n', '<leader>fg', telescope.live_grep, { desc = "Live Grep (Global Search)" })
 vim.keymap.set('n', '<leader>fw', telescope.find_word, { desc = "Find" })
-
--- FIXME: 可视模式下 x 删除后自动清理多余光标
-vim.keymap.set('v', 'x', function()
-    vim.api.nvim_feedkeys('x', 'n', false)
-    vim.fn.VSCodeNotify('removeSecondaryCursors')
-end, { noremap = true, silent = true, desc = "删除并清理多余光标" })
