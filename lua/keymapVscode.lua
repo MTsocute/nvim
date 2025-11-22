@@ -1,4 +1,37 @@
+
 -- * ================== 对应的 Vscode 的 API =================
+local telescope = {
+    -- 相当于 Telescope find_files (找文件)
+    find_files = function()
+        vim.fn.VSCodeNotify('workbench.action.quickOpen')
+    end,
+
+    -- 相当于 Telescope live_grep (全局搜索文字)
+    live_grep = function()
+        vim.fn.VSCodeNotify('workbench.action.findInFiles')
+    end,
+
+    -- 相当于 Telescope buffers (找打开的文件/Tab)
+    buffers = function()
+        vim.fn.VSCodeNotify('workbench.action.showAllEditors')
+    end,
+
+    -- 相当于 Telescope help_tags (VS Code 命令面板)
+    help_tags = function()
+        vim.fn.VSCodeNotify('workbench.action.showCommands')
+    end,
+
+    -- 相当于 Telescope current_buffer_fuzzy_find (当前文件内搜索)
+    find_word = function()
+        vim.fn.VSCodeNotify('actions.find')
+    end,
+
+    -- 相当于 Telescope resume (恢复上次的 Picker)
+    resume = function()
+        vim.fn.VSCodeNotify('workbench.action.quickOpenNavigateNextInEditorPicker')
+    end
+}
+
 local search = {
     reference = function()
         vim.fn.VSCodeNotify("editor.action.referenceSearch.trigger")
@@ -68,6 +101,13 @@ local workbench = {
     nextEditor = function()
         vim.fn.VSCodeNotify("workbench.action.nextEditor")
     end,
+    -- Ctrl+Tab / Ctrl+Shift+Tab 效果
+    quickOpenPreviousRecentlyUsed = function()
+        vim.fn.VSCodeNotify("workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup")
+    end,
+    quickOpenNavigatePrevious = function()
+        vim.fn.VSCodeNotify("workbench.action.quickOpenNavigatePreviousInEditorPicker")
+    end,
     focusLeftGroup = function()
         vim.fn.VSCodeNotify("workbench.action.focusLeftGroup")
     end,
@@ -101,24 +141,18 @@ local editor = {
 }
 
 -- * ====================== 让按键绑定功能 ======================
-
 vim.g.mapleader = " "
 
 -- no highlight
-vim.keymap.set({'n'}, "<Esc>", "<cmd>noh<CR>")
+vim.keymap.set({ 'n' }, "<Esc>", "<cmd>noh<CR>")
 
 -- format
-vim.keymap.set({'n'}, "<leader>ff", file.format)
+vim.keymap.set({ 'n' }, "<leader>fm", file.format)
 
 -- Editor Navigation
-vim.keymap.set({'n', 'v'}, "J", workbench.previousEditor)
-vim.keymap.set({'n', 'v'}, "K", workbench.nextEditor)
+vim.keymap.set({ 'n', 'v' }, "J", workbench.previousEditor)
+vim.keymap.set({ 'n', 'v' }, "K", workbench.nextEditor)
 
--- search
-vim.keymap.set({'n'}, "<leader>sr", search.reference)
-vim.keymap.set({'n'}, "<leader>sR", search.referenceInSideBar)
-vim.keymap.set({'n'}, "<leader>sp", search.project)
-vim.keymap.set({'n'}, "<leader>st", search.text)
 
 -- 在 Editor Group 之间按 <C-hjkl> 跳转
 vim.keymap.set('n', '<C-h>', workbench.focusLeftGroup)
@@ -155,8 +189,26 @@ vim.keymap.set('n', '<leader>n', 'mciw*<Cmd>nohl<CR>', {
     remap = true,
     desc = "多光标选择当前单词, 并跳转到下一个"
 })
-vim.keymap.set('n', '<leader>x', 'mclw', {
+vim.keymap.set('n', '<leader>x', 'mcl', {
     remap = true,
     desc = "取消当前光标所在单词的多光标选择"
 })
 
+-- 2. 修复白色残影 (增强 Esc 功能)
+vim.keymap.set({ 'n' }, "<Esc>", function()
+    vim.cmd("nohl")
+    vim.fn.VSCodeNotify('closeFindWidget')
+    vim.fn.VSCodeNotify('cancelSelection')
+    vim.fn.VSCodeNotify('removeSecondaryCursors')
+end)
+
+-- 绑定快捷键 (模仿 Telescope 默认键位)
+vim.keymap.set('n', '<leader>ff', telescope.find_files, { desc = "Find Files (Quick Open)" })
+vim.keymap.set('n', '<leader>fg', telescope.live_grep, { desc = "Live Grep (Global Search)" })
+vim.keymap.set('n', '<leader>fw', telescope.find_word, { desc = "Find" })
+
+-- FIXME: 可视模式下 x 删除后自动清理多余光标
+vim.keymap.set('v', 'x', function()
+    vim.api.nvim_feedkeys('x', 'n', false)
+    vim.fn.VSCodeNotify('removeSecondaryCursors')
+end, { noremap = true, silent = true, desc = "删除并清理多余光标" })

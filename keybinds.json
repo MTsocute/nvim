@@ -1,4 +1,3 @@
-// Place your key bindings in this file to override the defaults
 [
     {
         "key": "insert m",
@@ -14,7 +13,6 @@
         "command": "-jupyter.runByLineNext",
         "when": "notebookCellResource in 'jupyter.notebookeditor.runByLineCells'"
     },
-    // * ================ Adjust View Width and Height ================
     {
         "key": "ctrl+left",
         "command": "workbench.action.decreaseViewWidth",
@@ -35,7 +33,6 @@
         "command": "workbench.action.increaseViewHeight",
         "when": "!isAuxiliaryWindowFocusedContext && !terminalFocus && neovim.mode != 'cmdline'"
     },
-    // * ================End of View Adjustment ================
     {
         "key": "ctrl+f10",
         "command": "workbench.action.focusActiveEditorGroup",

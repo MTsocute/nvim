@@ -11,7 +11,7 @@ This repository contains my personal configuration for using Neovim inside VSCod
 ## Getting Started
 1. Clone this repository:
    ```sh
-   git clone https://github.com/MTsocute/vscode-nvim-configuration.git ~/.config/nvim
+   git clone https://github.com/MTsocute/nvim.git ~/.config/nvim
    ```
 2. Open VSCode and ensure the Neovim extension is installed.
 3. Enjoy your enhanced Neovim experience in VSCode!

@@ -11,7 +11,7 @@
 ## 快速开始
 1. 克隆本仓库：
    ```sh
-   git clone https://github.com/MTsocute/vscode-nvim-configuration.git ~/.config/nvim
+   git clone https://github.com/MTsocute/nvim ~/.config/nvim
    ```
 2. 打开 VSCode，确保已安装 Neovim 插件。
 3. 享受更强大的 Neovim 开发体验！
