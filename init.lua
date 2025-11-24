@@ -1,29 +1,18 @@
+-- * ====================== INITIALTION ENTRANCE ======================
+
+-- ! 优先级要高于下面，载入插件
+require("lua.plugins.init")
+
+-- 加载公共配置
+require("public.configPublic")
+require("public.keymapPublic")
+
+-- Vscode 专属配置
 if vim.g.vscode then
-    require("keymapVscode")
-    require("hackermap")
-
-    -- ? FIXME: Workaround for vscode-neovim UI desync (issue #2117)
-    -- 1. Redraw on CursorHold (idle for some time)
-    local redraw_fix = vim.api.nvim_create_augroup('VSCodeRedrawFix', { clear = true })
-    vim.api.nvim_create_autocmd('CursorHold', {
-        group = redraw_fix,
-        callback = function()
-            vim.cmd('silent! mode')
-        end,
-    })
-
-    -- 2. Redraw immediately after text changes (e.g., visual delete)
-    local redraw_group = vim.api.nvim_create_augroup('RedrawOnDelete', { clear = true })
-    vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI' }, {
-        group = redraw_group,
-        callback = function()
-            if vim.fn.mode() == 'n' then
-                vim.cmd('silent! mode')
-            end
-        end,
-    })
+    require("lua.vsc.keymapVscode")
+    require("lua.vsc.configVscode")
+-- Neovim 专属配置
+else
+    require("lua.nvim.keymap")
+    require("lua.nvim.config")
 end
-
-require("plugin")
-require("keymap")
-require("config")

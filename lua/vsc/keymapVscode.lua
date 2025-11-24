@@ -1,4 +1,7 @@
 -- * ================== 对应的 Vscode 的 API =================
+-- ? API 文档地址：https://code.visualstudio.com/api/references/vscode-api
+
+-- 模仿 Telescope 的功能实现
 local telescope = {
     -- 相当于 Telescope find_files (找文件)
     find_files = function()
@@ -31,34 +34,28 @@ local telescope = {
     end
 }
 
-local search = {
-    reference = function()
-        vim.fn.VSCodeNotify("editor.action.referenceSearch.trigger")
+-- 代码折叠
+local fold = {
+    foldAll = function()
+        vim.fn.VSCodeNotify('editor.foldAll')
     end,
-    referenceInSideBar = function()
-        vim.fn.VSCodeNotify("references-view.find")
+    unfoldAll = function()
+        vim.fn.VSCodeNotify('editor.unfoldAll')
     end,
-    project = function()
-        vim.fn.VSCodeNotify("editor.action.addSelectionToNextFindMatch")
-        vim.fn.VSCodeNotify("workbench.action.findInFiles")
+    fold = function()
+        vim.fn.VSCodeNotify('editor.fold')
     end,
-    text = function()
-        vim.fn.VSCodeNotify("workbench.action.findInFiles")
-    end
-}
-
-local code_folder = {
-    fold_all_code = function()
-        vim.fn.VSCodeNotify("editor.foldAll")
+    foldRecursively = function()
+        vim.fn.VSCodeNotify('editor.foldRecursively')
     end,
-    unfold_all_code = function()
-        vim.fn.VSCodeNotify("editor.unfoldAll")
+    unfold = function()
+        vim.fn.VSCodeNotify('editor.unfold')
     end,
-    fold_code = function()
-        vim.fn.VSCodeNotify("editor.fold")
+    unfoldRecursively = function()
+        vim.fn.VSCodeNotify('editor.unfoldRecursively')
     end,
-    unfold_code = function()
-        vim.fn.VSCodeNotify("editor.unfold")
+    toggleFold = function()
+        vim.fn.VSCodeNotify('editor.toggleFold')
     end
 }
 
@@ -121,15 +118,6 @@ local workbench = {
     end
 }
 
-local vscode = {
-    moveSideBarRight = function()
-        vim.fn.VSCodeNotify("workbench.action.moveSideBarRight")
-    end,
-    moveSideBarLeft = function()
-        vim.fn.VSCodeNotify("workbench.action.moveSideBarLeft")
-    end
-}
-
 local editor = {
     closeCurrentEditor = function()
         vim.fn.VSCodeNotify('workbench.action.closeActiveEditor')
@@ -160,50 +148,19 @@ vim.keymap.set('n', '<C-j>', workbench.focusBelowGroup)
 vim.keymap.set('n', '<C-k>', workbench.focusAboveGroup)
 
 -- 编辑器的关闭设置
-vim.keymap.set('n', '<leader>wc', editor.closeCurrentEditor)
+vim.keymap.set('n', '<leader>cc', editor.closeCurrentEditor)
 vim.keymap.set('n', '<leader>ca', editor.closeAllEditors)
 
--- 代码折叠
-local function map_fold(key, vscode_cmd)
-    vim.api.nvim_set_keymap('n', key, '<Cmd>call VSCodeNotify("' .. vscode_cmd .. '")<CR>', {
-        noremap = true,
-        silent = true
-    })
-end
 
-map_fold('zM', 'editor.foldAll')
-map_fold('zR', 'editor.unfoldAll')
-map_fold('zc', 'editor.fold')
-map_fold('zC', 'editor.foldRecursively')
-map_fold('zo', 'editor.unfold')
-map_fold('zO', 'editor.unfoldRecursively')
-map_fold('za', 'editor.toggleFold')
+-- 代码折叠操作
+vim.keymap.set('n', 'zM', fold.foldAll, { desc = 'Fold All' })
+vim.keymap.set('n', 'zR', fold.unfoldAll, { desc = 'Unfold All' })
+vim.keymap.set('n', 'zc', fold.fold, { desc = 'Fold' })
+vim.keymap.set('n', 'zC', fold.foldRecursively, { desc = 'Fold Recursively' })
+vim.keymap.set('n', 'zo', fold.unfold, { desc = 'Unfold' })
+vim.keymap.set('n', 'zO', fold.unfoldRecursively, { desc = 'Unfold Recursively' })
+vim.keymap.set('n', 'za', fold.toggleFold, { desc = 'Toggle Fold' })
 
-
-
-
-
--- 多光标操作
-vim.keymap.set('n', '<leader>p', 'mciw#<Cmd>nohl<CR>', {
-    remap = true,
-    desc = "多光标选择当前单词, 并跳转到上一个"
-})
-vim.keymap.set('n', '<leader>n', 'mciw*<Cmd>nohl<CR>', {
-    remap = true,
-    desc = "多光标选择当前单词, 并跳转到下一个"
-})
-vim.keymap.set('n', '<leader>x', 'mcl', {
-    remap = true,
-    desc = "取消当前光标所在单词的多光标选择"
-})
-
--- 2. 修复白色残影 (增强 Esc 功能)
-vim.keymap.set({ 'n' }, "<Esc>", function()
-    vim.cmd("nohl")
-    vim.fn.VSCodeNotify('closeFindWidget')
-    vim.fn.VSCodeNotify('cancelSelection')
-    vim.fn.VSCodeNotify('removeSecondaryCursors')
-end)
 
 -- 绑定快捷键 (模仿 Telescope 默认键位)
 vim.keymap.set('n', '<leader>fa', telescope.find_files, { desc = "Find Files (Quick Open)" })
